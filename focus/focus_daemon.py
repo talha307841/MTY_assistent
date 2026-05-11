@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import UTC, date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 from typing import Any, Optional
@@ -150,7 +150,7 @@ class FocusDaemon:
 
         @self.app.post("/task/create")
         async def task_create(payload: TaskCreateRequest) -> dict[str, Any]:
-            now = datetime.now(UTC)
+            now = datetime.now(timezone.utc)
             with self.session_factory() as session:
                 task = Task(
                     title=payload.title.strip(),
@@ -176,7 +176,7 @@ class FocusDaemon:
                 task.status = TaskStatus.BLOCKED
                 task.blocked_reason = payload.reason.strip()
                 task.unblock_condition = payload.dependency.strip()
-                task.updated_at = datetime.now(UTC)
+                task.updated_at = datetime.now(timezone.utc)
                 session.commit()
             return {"ok": True}
 
@@ -187,7 +187,7 @@ class FocusDaemon:
                 if not task:
                     raise HTTPException(status_code=404, detail="Task not found")
                 task.status = TaskStatus.DONE
-                task.updated_at = datetime.now(UTC)
+                task.updated_at = datetime.now(timezone.utc)
                 session.commit()
             return {"ok": True}
 
@@ -220,13 +220,13 @@ class FocusDaemon:
         async def chat(payload: ChatRequest) -> dict[str, Any]:
             context = self._collect_chat_context()
             with self.session_factory() as session:
-                session.add(Conversation(role="user", content=payload.message.strip(), timestamp=datetime.now(UTC)))
+                session.add(Conversation(role="user", content=payload.message.strip(), timestamp=datetime.now(timezone.utc)))
                 session.commit()
 
             response = self.llm.chat(payload.message, context=context)
 
             with self.session_factory() as session:
-                session.add(Conversation(role="assistant", content=response, timestamp=datetime.now(UTC)))
+                session.add(Conversation(role="assistant", content=response, timestamp=datetime.now(timezone.utc)))
                 session.commit()
             return {"reply": response}
 
@@ -247,7 +247,7 @@ class FocusDaemon:
             ).all()
             recent_activity = session.scalars(
                 select(ActivityLog)
-                .where(ActivityLog.timestamp >= datetime.now(UTC) - timedelta(hours=2))
+                .where(ActivityLog.timestamp >= datetime.now(timezone.utc) - timedelta(hours=2))
                 .order_by(ActivityLog.timestamp.desc())
                 .limit(200)
             ).all()
@@ -283,7 +283,7 @@ class FocusDaemon:
     def generate_eod_report(self) -> str:
         today = date.today().isoformat()
         with self.session_factory() as session:
-            start = datetime.now(UTC).replace(hour=0, minute=0, second=0, microsecond=0)
+            start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
             activities = session.scalars(select(ActivityLog).where(ActivityLog.timestamp >= start)).all()
             tasks = session.scalars(select(Task)).all()
 
@@ -306,7 +306,7 @@ class FocusDaemon:
 
     def poll_activitywatch(self) -> None:
         aw_base = self.config.get("aw_base_url", AW_BASE_URL)
-        now = datetime.now(UTC)
+        now = datetime.now(timezone.utc)
         start = now - timedelta(seconds=int(self.config.get("poll_seconds", POLL_SECONDS)) + 5)
 
         query = {
