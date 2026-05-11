@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from db.models import Task, TaskStatus
@@ -13,8 +13,8 @@ class ResurfacingEngine:
         self.logger = logger
 
     def _minutes_since(self, dt: datetime) -> float:
-        now = datetime.now(UTC)
-        updated = dt if dt.tzinfo else dt.replace(tzinfo=UTC)
+        now = datetime.now(timezone.utc)
+        updated = dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
         return (now - updated).total_seconds() / 60.0
 
     def _condition_met(self, task: Task, activity_text: str, idle_minutes: float) -> bool:

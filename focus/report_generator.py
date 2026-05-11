@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -88,10 +88,14 @@ class ReportGenerator:
         existing = session.query(DailyReport).filter(DailyReport.date == report_date).first()
         if existing:
             existing.report_markdown = report_markdown
-            existing.generated_at = datetime.now(UTC)
+            existing.generated_at = datetime.now(timezone.utc)
             report = existing
         else:
-            report = DailyReport(date=report_date, report_markdown=report_markdown, generated_at=datetime.now(UTC))
+            report = DailyReport(
+                date=report_date,
+                report_markdown=report_markdown,
+                generated_at=datetime.now(timezone.utc),
+            )
             session.add(report)
 
         out_dir = Path.home() / ".focus" / "reports"
