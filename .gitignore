@@ -1,0 +1,16 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+
+# Project-specific local runtime data
+focus/.venv/
+focus/.pytest_cache/
+focus/__pycache__/
+focus/tests/__pycache__/
+focus/db/__pycache__/
+focus/.focus/

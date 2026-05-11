@@ -1,0 +1,11 @@
+nvidia_nim_api_key: ""
+model: "meta/llama-3.1-70b-instruct"
+aw_base_url: "http://127.0.0.1:5600"
+poll_seconds: 30
+voice:
+  enabled: false
+  whisper_model: "base"
+  piper_voice_path: ""
+notifications:
+  forgotten_task_minutes: 30
+  switch_followup_minutes: 45

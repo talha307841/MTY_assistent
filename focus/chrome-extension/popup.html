@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FOCUS</title>
+    <style>
+      :root {
+        --bg: #f8f6f1;
+        --card: #fffdf8;
+        --ink: #1f1f1f;
+        --accent: #0a7f5a;
+        --warn: #b35a00;
+      }
+      body {
+        margin: 0;
+        font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+        background: radial-gradient(circle at top right, #e8f4ef, var(--bg) 40%);
+        color: var(--ink);
+        width: 360px;
+        padding: 12px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid #dfddd7;
+        border-radius: 12px;
+        padding: 10px;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 16px;
+      }
+      #status {
+        font-size: 12px;
+        margin-bottom: 8px;
+      }
+      button {
+        width: 100%;
+        margin: 4px 0;
+        border: 0;
+        border-radius: 8px;
+        padding: 8px;
+        cursor: pointer;
+        background: #ede8db;
+      }
+      button.primary {
+        background: var(--accent);
+        color: white;
+      }
+      button.warn {
+        background: var(--warn);
+        color: white;
+      }
+      #pending {
+        margin-top: 8px;
+        font-size: 12px;
+        max-height: 140px;
+        overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>FOCUS</h1>
+      <div id="status">Loading current task...</div>
+      <button id="newTask" class="primary">New Task</button>
+      <button id="markBlocked" class="warn">Mark as Blocked</button>
+      <button id="pendingBtn">What's Pending?</button>
+      <button id="readPage">Read Page</button>
+      <div id="pending"></div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
